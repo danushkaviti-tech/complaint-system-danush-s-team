@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GVMC Help & Support</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #e3f2fd, #f4f6f9);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 850px;
+            height: 85vh;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .chat-header {
+            background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+            color: #fff;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .chat-header h4 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .chat-header small {
+            opacity: 0.9;
+        }
+
+        /* Body */
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f9fafb;
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-body::-webkit-scrollbar-thumb {
+            background: #cfd8dc;
+            border-radius: 10px;
+        }
+
+        /* Messages */
+        .msg {
+            max-width: 75%;
+            padding: 12px 18px;
+            margin-bottom: 14px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            position: relative;
+            animation: fadeIn 0.25s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-msg {
+            background: #0d6efd;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-msg {
+            background: #e9ecef;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .typing {
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        /* Footer */
+        .chat-footer {
+            padding: 15px;
+            background: #fff;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-footer input {
+            border-radius: 30px;
+            padding: 12px 18px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .chat-footer button {
+            border-radius: 30px;
+            padding: 0 24px;
+            font-weight: 500;
+        }
+
+        /* Mobile */
+        @media (max-width: 576px) {
+            .chat-container {
+                height: 95vh;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        <h4>GVMC Help Assistant</h4>
+        <small>Get help about complaints & services</small>
+    </div>
+
+    <div id="chatBody" class="chat-body"></div>
+
+    <div class="chat-footer">
+        <input type="text" id="userInput" class="form-control" placeholder="Type your question here...">
+        <button class="btn btn-primary" onclick="sendMessage()">Ask</button>
+    </div>
+</div>
+
+<script>
+async function sendMessage() {
+    const input = document.getElementById("userInput");
+    const chatBody = document.getElementById("chatBody");
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    const userDiv = document.createElement("div");
+    userDiv.className = "msg user-msg";
+    userDiv.innerText = message;
+    chatBody.appendChild(userDiv);
+
+    input.value = "";
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    const typingDiv = document.createElement("div");
+    typingDiv.className = "msg bot-msg typing";
+    typingDiv.innerText = "GVMC Assistant is typing...";
+    chatBody.appendChild(typingDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    try {
+        const response = await fetch("/help/chat/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify({ message })
+        });
+
+        const data = await response.json();
+        typingDiv.remove();
+
+        const botDiv = document.createElement("div");
+        botDiv.className = "msg bot-msg";
+        botDiv.innerText = data.reply || "No response received.";
+        chatBody.appendChild(botDiv);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+    } catch (err) {
+        typingDiv.remove();
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "msg bot-msg";
+        errorDiv.innerText = "Server error. Please try again later.";
+        chatBody.appendChild(errorDiv);
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    document.cookie.split(";").forEach(cookie => {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + "=")) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        }
+    });
+    return cookieValue;
+}
+
+document.getElementById("userInput").addEventListener("keypress", function(e){
+    if (e.key === "Enter") {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+</script>
+
+</body>
+</html>
