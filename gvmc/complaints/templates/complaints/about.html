@@ -1,9 +1,161 @@
 {% extends 'base.html' %}
 
+{% block title %}About Our Mission{% endblock %}
+
 {% block content %}
-<div class="card shadow p-4">
-    <h2>About GVMC Complaint Portal</h2>
-    <p>This portal allows residents to register complaints, track their status, and receive notifications when the complaint is in progress or resolved.</p>
-    <p>Our goal is to make complaint handling faster, transparent, and easier for everyone.</p>
+<style>
+    /* Section Heading Animation */
+    .about-header {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    /* Bento Grid Card Styling */
+    .bento-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 40px;
+        height: 100%;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .bento-card:hover {
+        background: rgba(255, 255, 255, 0.07);
+        border-color: var(--primary);
+        transform: translateY(-10px);
+    }
+
+    .icon-circle {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    .stat-number {
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: linear-gradient(to bottom, #fff, #64748b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+    }
+
+    .feature-tag {
+        display: inline-block;
+        padding: 5px 15px;
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--primary);
+        border-radius: 100px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+    }
+
+    /* Floating background shapes for the About page */
+    .shape {
+        position: absolute;
+        z-index: -1;
+        filter: blur(80px);
+        opacity: 0.2;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="text-center mb-5 about-header" id="aboutHeader">
+        <span class="feature-tag">Our Digital Initiative</span>
+        <h1 class="display-4 fw-bold mb-3">Empowering Citizens,<br>Enhancing Governance.</h1>
+        <p class="lead text-secondary mx-auto" style="max-width: 700px;">
+            The GVMC Complaint Portal is more than just a website—it's a commitment to transparency and rapid urban improvement.
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+            <div class="bento-card">
+                <div class="icon-circle">
+                    <i class="fa-solid fa-eye"></i>
+                </div>
+                <h3>Our Core Vision</h3>
+                <p class="text-secondary fs-5 lh-lg">
+                    We believe that every citizen of Visakhapatnam deserves a direct line to city management. By digitizing the grievance process, we remove bureaucratic hurdles and ensure that your voice is heard, tracked, and acted upon in record time.
+                </p>
+                <div class="mt-4 d-flex gap-4">
+                    <div>
+                        <div class="stat-number">100%</div>
+                        <div class="text-muted small fw-bold">TRANSPARENCY</div>
+                    </div>
+                    <div>
+                        <div class="stat-number">24/7</div>
+                        <div class="text-muted small fw-bold">ACCESSIBILITY</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="bento-card">
+                <div class="icon-circle" style="background: linear-gradient(135deg, #06b6d4, #22c55e);">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h4>Real-time Tracking</h4>
+                <p class="text-secondary">
+                    Stop wondering what happened to your request. Watch your complaint move from "Received" to "In Progress" to "Resolved" with live dashboard updates.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="bento-card">
+                <div class="icon-circle" style="background: linear-gradient(135deg, #f43f5e, #fb923c);">
+                    <i class="fa-solid fa-users-gear"></i>
+                </div>
+                <h4>Officer Accountability</h4>
+                <p class="text-secondary">
+                    Complaints are assigned to specific ward officials, ensuring someone is always responsible for your neighborhood's welfare.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-lg-8" data-aos="fade-up" data-aos-delay="400">
+            <div class="bento-card d-flex align-items-center">
+                <div class="row w-100">
+                    <div class="col-md-7">
+                        <h4>Building a Smart Community</h4>
+                        <p class="text-secondary">
+                            Your data helps us identify patterns. If multiple residents report water issues in one area, our AI systems flag it for infrastructure review.
+                        </p>
+                    </div>
+                    <div class="col-md-5 text-center d-none d-md-block">
+                        <i class="fa-solid fa-city" style="font-size: 8rem; opacity: 0.1; transform: rotate(-10deg);"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    // GSAP Header Animation
+    window.addEventListener('load', () => {
+        gsap.to("#aboutHeader", {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out"
+        });
+    });
+</script>
 {% endblock %}

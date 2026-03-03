@@ -3,44 +3,156 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GVMC Portal - {% block title %}{% endblock %}</title>
+  <title>GVMC Vizag | {% block title %}{% endblock %}</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;800&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-    .navbar-brand { font-weight: 600; color: #0d6efd; }
-    .card { border-radius: 1rem; }
-    .form-control, .form-select { border-radius: 0.5rem; }
-    .btn-primary { border-radius: 0.5rem; font-weight: 500; }
-    footer { font-size: 0.85rem; color: #6c757d; padding: 1rem 0; text-align: center; }
+    :root {
+      --primary: #6366f1;
+      --secondary: #a855f7;
+      --dark-bg: #0f172a;
+      --glass: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+
+    body {
+      background-color: var(--dark-bg);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #f8fafc;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .blob {
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      background: var(--primary);
+      filter: blur(100px);
+      border-radius: 50%;
+      z-index: -1;
+      opacity: 0.15;
+    }
+
+    .navbar {
+      background: rgba(15, 23, 42, 0.8) !important;
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 1rem 0;
+      transition: all 0.4s ease;
+    }
+
+    .navbar-brand {
+      font-weight: 800;
+      font-size: 1.6rem;
+      background: linear-gradient(90deg, #fff, var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .vizag-time-box {
+      border-left: 1px solid var(--glass-border);
+      padding-left: 15px;
+      margin-left: 15px;
+    }
+
+    #vizag-clock {
+      font-family: 'Monaco', 'Consolas', monospace;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    #page-content {
+      flex: 1;
+      opacity: 0; 
+      transform: translateY(20px);
+    }
+
+    footer {
+      border-top: 1px solid var(--glass-border);
+      background: rgba(0,0,0,0.2);
+      padding: 2rem 0;
+      color: #64748b;
+      margin-top: auto;
+    }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+
+  <div class="blob" style="top: -100px; right: -100px;"></div>
+  <div class="blob" style="bottom: -100px; left: -100px; background: var(--secondary);"></div>
+
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
-      <a class="navbar-brand" href="{% url 'home' %}">GVMC Portal</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <a class="navbar-brand" href="/">
+        <i class="fa-solid fa-anchor me-2"></i>GVMC VIZAG
+      </a>
+      
+      <div class="d-none d-md-flex vizag-time-box flex-column">
+        <small class="text-secondary" style="font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase;">Vizag Current Time</small>
+        <span id="vizag-clock">--:--:-- --</span>
+      </div>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'complaint_create' %}">Submit Complaint</a></li>
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'help' %}">Help Center</a></li>
+          <li class="nav-item">
+            <a class="btn btn-primary rounded-pill px-4 ms-lg-3" href="{% url 'complaint_create' %}">
+              <i class="fa-solid fa-plus-circle me-1"></i> New Complaint
+            </a>
+          </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Page content -->
-  <div class="container mt-5">
+  <main id="page-content" class="container mt-5 mb-5">
     {% block content %}{% endblock %}
-  </div>
+  </main>
 
   <footer>
-    GVMC &copy; {{ current_year }} | All rights reserved
+    <div class="container text-center">
+      <p class="mb-0">GVMC Smart City Initiative &copy; 2026 | Vizag Digital Grievance Portal</p>
+    </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  
+  <script>
+    function updateVizagClock() {
+      const options = { 
+        timeZone: 'Asia/Kolkata', 
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
+      };
+      const clockElement = document.getElementById('vizag-clock');
+      if (clockElement) {
+        clockElement.innerText = new Intl.DateTimeFormat('en-US', options).format(new Date());
+      }
+    }
+    setInterval(updateVizagClock, 1000);
+    updateVizagClock();
+
+    window.addEventListener('load', () => {
+      gsap.to("#page-content", { opacity: 1, y: 0, duration: 1, ease: "expo.out" });
+    });
+
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('.navbar');
+      nav.style.padding = window.scrollY > 50 ? "0.6rem 0" : "1rem 0";
+      nav.style.background = window.scrollY > 50 ? "rgba(10, 15, 30, 0.95)" : "rgba(15, 23, 42, 0.8)";
+    });
+  </script>
 </body>
 </html>

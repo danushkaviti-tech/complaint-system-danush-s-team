@@ -1,21 +1,200 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Complaint Submitted</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submission Successful | GVMC</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        :root {
+            --success-color: #22c55e;
+            --bg-dark: #0f172a;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0;
+            color: white;
+        }
+
+        /* Ambient Background Glow */
+        .glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        /* Success Card */
+        .success-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            padding: 60px 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        /* Animated Checkmark SVG */
+        .checkmark-svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 30px;
+        }
+
+        .checkmark-circle {
+            fill: none;
+            stroke: var(--success-color);
+            stroke-width: 2;
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+        }
+
+        .checkmark-check {
+            fill: none;
+            stroke: var(--success-color);
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+        }
+
+        .ticket-id {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 12px;
+            display: inline-block;
+            font-family: monospace;
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 20px 0;
+        }
+
+        .btn-home {
+            background: white;
+            color: black;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 100px;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-home:hover {
+            transform: scale(1.05);
+            background: var(--success-color);
+            color: white;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            background: var(--success-color);
+            border-radius: 50%;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container mt-5">
-    <div class="card shadow p-4 text-center">
-        <h2 class="text-success">✅ Complaint Submitted Successfully</h2>
-        <p class="mt-3">
-            Thank you for reporting the issue.  
-            Our GVMC team will review your complaint and take action.
+    <div class="glow"></div>
+
+    <div class="success-card" id="card">
+        <svg class="checkmark-svg" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25"/>
+            <path class="checkmark-check" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+
+        <h1 class="fw-bold mb-3">All Set!</h1>
+        <p class="text-secondary px-3">
+            Your complaint has been successfully transmitted to the GVMC digital grid. Our response team will be notified immediately.
         </p>
-        <a href="/" class="btn btn-primary mt-3">Submit Another Complaint</a>
-    </div>
-</div>
 
+        <div class="ticket-id">
+            Ref ID: #GVMC-2026-{{ "now"|date:"is" }}
+        </div>
+
+        <div class="mt-4">
+            <a href="/" class="btn-home">
+                <i class="fa-solid fa-house me-2"></i> RETURN HOME
+            </a>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline();
+
+            // 1. Animate Card in
+            tl.to("#card", {
+                duration: 0.8,
+                opacity: 1,
+                scale: 1,
+                ease: "back.out(1.7)"
+            });
+
+            // 2. Animate Checkmark Path
+            tl.to(".checkmark-circle", {
+                strokeDashoffset: 0,
+                duration: 0.6,
+                ease: "power2.out"
+            }, "-=0.2");
+
+            tl.to(".checkmark-check", {
+                strokeDashoffset: 0,
+                duration: 0.4,
+                ease: "power2.out"
+            });
+
+            // 3. Trigger Particle Burst
+            createParticles();
+        });
+
+        function createParticles() {
+            for (let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                document.body.appendChild(p);
+
+                const size = Math.random() * 6 + 2;
+                gsap.set(p, {
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    width: size,
+                    height: size
+                });
+
+                gsap.to(p, {
+                    duration: Math.random() * 2 + 1,
+                    x: (Math.random() - 0.5) * 600 + window.innerWidth / 2,
+                    y: (Math.random() - 0.5) * 600 + window.innerHeight / 2,
+                    opacity: 0,
+                    scale: 0,
+                    ease: "power2.out",
+                    onComplete: () => p.remove()
+                });
+            }
+        }
+    </script>
 </body>
 </html>
