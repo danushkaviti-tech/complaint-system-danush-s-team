@@ -1,0 +1,170 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | GVMC</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary: #4f46e5; --secondary: #06b6d4; --dark: #020617; }
+    body { background-color: var(--dark); font-family: 'Outfit', sans-serif; color: #f8fafc; min-height: 100vh; }
+    .mesh-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+      background: radial-gradient(at 0% 0%, rgba(79,70,229,0.12) 0px, transparent 50%),
+                  radial-gradient(at 100% 100%, rgba(6,182,212,0.12) 0px, transparent 50%); }
+    .navbar { backdrop-filter: blur(15px); background: rgba(2,6,23,0.85); border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .glass-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px; transition: 0.3s; }
+    .glass-card:hover { border-color: rgba(79,70,229,0.4); box-shadow: 0 0 30px rgba(79,70,229,0.1); }
+    .sidebar { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px; }
+    .sidebar .nav-link { color: #94a3b8; border-radius: 12px; padding: 10px 16px; margin-bottom: 4px; font-weight: 500; transition: 0.2s; }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active { background: rgba(79,70,229,0.15); color: #a5b4fc; }
+    .avatar-circle { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--secondary)); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: white; border: 3px solid rgba(79,70,229,0.4); }
+    .stat-pill { background: rgba(79,70,229,0.1); border: 1px solid rgba(79,70,229,0.2); border-radius: 16px; padding: 20px; text-align: center; }
+    .stat-number { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .progress-bar-custom { height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+    .progress-bg { height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; }
+    .tag { background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.2); color: #67e8f9; font-size: 0.75rem; padding: 4px 10px; border-radius: 100px; }
+    .btn-gradient { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 10px 24px; border-radius: 12px; font-weight: 600; transition: 0.3s; }
+    .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,70,229,0.4); color: white; }
+    .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 10px 24px; border-radius: 12px; font-weight: 500; transition: 0.3s; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); color: #f8fafc; }
+    .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .info-row:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+<div class="mesh-bg"></div>
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-4" href="{% url 'home' %}">GVMC<span style="color:var(--primary)">.</span></a>
+    <div class="ms-auto d-flex align-items-center gap-3">
+      <a href="{% url 'home' %}" class="btn btn-ghost btn-sm"><i class="fa-solid fa-house me-1"></i>Home</a>
+      <form method="post" action="{% url 'users:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-ghost btn-sm text-danger"><i class="fa-solid fa-right-from-bracket me-1"></i>Logout</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+{% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+  <div class="alert alert-dismissible fade show py-2" style="background:rgba(79,70,229,0.15);border:1px solid rgba(79,70,229,0.3);color:#a5b4fc;border-radius:12px;" role="alert">
+    {{ message }}<button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="container py-5">
+  <div class="row g-4">
+
+    <!-- Sidebar -->
+    <div class="col-lg-3">
+      <div class="sidebar text-center">
+        {% if profile.profile_picture %}
+          <img src="{{ profile.profile_picture.url }}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid rgba(79,70,229,0.5);" class="mb-3">
+        {% else %}
+          <div class="avatar-circle mx-auto mb-3">{{ user.first_name|first|upper|default:user.username|first|upper }}</div>
+        {% endif %}
+        <h6 class="fw-bold mb-0 text-white">{{ profile.get_full_name }}</h6>
+        <small class="text-muted">@{{ user.username }}</small>
+        {% if profile.is_verified %}
+          <div class="mt-2"><span class="tag"><i class="fa-solid fa-circle-check me-1"></i>Verified</span></div>
+        {% endif %}
+        <hr style="border-color:rgba(255,255,255,0.08);">
+        <nav class="nav flex-column text-start">
+          <a class="nav-link active" href="{% url 'users:dashboard' %}"><i class="fa-solid fa-gauge me-2"></i>Dashboard</a>
+          <a class="nav-link" href="{% url 'users:profile' %}"><i class="fa-solid fa-user me-2"></i>My Profile</a>
+          <a class="nav-link" href="{% url 'users:edit_profile' %}"><i class="fa-solid fa-pen me-2"></i>Edit Profile</a>
+          <a class="nav-link" href="{% url 'complaint_create' %}"><i class="fa-solid fa-plus me-2"></i>File Complaint</a>
+          <hr style="border-color:rgba(255,255,255,0.08);">
+          <form method="post" action="{% url 'users:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start text-danger">
+              <i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+            </button>
+          </form>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="col-lg-9">
+      <h4 class="fw-bold text-white mb-1">Welcome back, {{ user.first_name|default:user.username }} 👋</h4>
+      <p class="text-muted mb-4">Here's your GVMC citizen overview.</p>
+
+      <!-- Stats -->
+      <div class="row g-3 mb-4">
+        <div class="col-4">
+          <div class="stat-pill">
+            <div class="stat-number">Active</div>
+            <small class="text-muted">Account Status</small>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="stat-pill">
+            <div class="stat-number">{{ user.date_joined|date:"Y" }}</div>
+            <small class="text-muted">Member Since</small>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="stat-pill">
+            <div class="stat-number">{{ user.last_login|date:"d M"|default:"—" }}</div>
+            <small class="text-muted">Last Login</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Completeness -->
+      <div class="glass-card mb-4">
+        <h6 class="fw-bold text-white mb-3"><i class="fa-solid fa-chart-simple me-2 text-primary" style="color:var(--secondary)!important"></i>Profile Completeness</h6>
+        {% if user.first_name and user.email and profile.phone_number and profile.city and profile.bio %}
+          {% with pct=90 %}
+          <div class="progress-bg mb-2"><div class="progress-bar-custom" style="width:90%"></div></div>
+          <small class="text-muted">90% complete — great job!</small>
+          {% endwith %}
+        {% elif user.first_name and user.email and profile.phone_number %}
+          <div class="progress-bg mb-2"><div class="progress-bar-custom" style="width:60%"></div></div>
+          <small class="text-muted">60% — add your city and bio to complete your profile</small>
+        {% elif user.first_name and user.email %}
+          <div class="progress-bg mb-2"><div class="progress-bar-custom" style="width:40%"></div></div>
+          <small class="text-muted">40% — add phone, city, and bio</small>
+        {% else %}
+          <div class="progress-bg mb-2"><div class="progress-bar-custom" style="width:20%"></div></div>
+          <small class="text-muted">20% — please complete your profile</small>
+        {% endif %}
+        <div class="mt-3 d-flex flex-wrap gap-2">
+          {% if not user.first_name %}<span class="tag" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.1);">+ Add name</span>{% endif %}
+          {% if not user.email %}<span class="tag" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.1);">+ Add email</span>{% endif %}
+          {% if not profile.phone_number %}<span class="tag" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.1);">+ Add phone</span>{% endif %}
+          {% if not profile.city %}<span class="tag" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.1);">+ Add city</span>{% endif %}
+          {% if not profile.bio %}<span class="tag" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.1);">+ Add bio</span>{% endif %}
+        </div>
+      </div>
+
+      <!-- Account Details -->
+      <div class="glass-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold text-white mb-0"><i class="fa-solid fa-id-card me-2" style="color:var(--secondary)"></i>Account Details</h6>
+          <a href="{% url 'users:edit_profile' %}" class="btn btn-gradient btn-sm">Edit Profile</a>
+        </div>
+        <div class="info-row"><span class="text-muted">Full Name</span><span class="text-white">{{ profile.get_full_name }}</span></div>
+        <div class="info-row"><span class="text-muted">Email</span><span class="text-white">{{ user.email|default:"—" }}</span></div>
+        <div class="info-row"><span class="text-muted">Phone</span><span class="text-white">{{ profile.phone_number|default:"—" }}</span></div>
+        <div class="info-row"><span class="text-muted">City</span><span class="text-white">{{ profile.city|default:"—" }}</span></div>
+        <div class="info-row"><span class="text-muted">Gender</span><span class="text-white">{{ profile.get_gender_display|default:"—" }}</span></div>
+        <div class="info-row"><span class="text-muted">Joined</span><span class="text-white">{{ user.date_joined|date:"d M Y" }}</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | GVMC</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --primary: #4f46e5; --secondary: #06b6d4; --dark: #020617; }
+    body { background-color: var(--dark); font-family: 'Outfit', sans-serif; color: #f8fafc; min-height: 100vh; display: flex; align-items: center; }
+    .mesh-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+      background: radial-gradient(at 0% 0%, rgba(79,70,229,0.15) 0px, transparent 50%),
+                  radial-gradient(at 100% 100%, rgba(6,182,212,0.15) 0px, transparent 50%); }
+    .auth-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 48px 40px; width: 100%; max-width: 440px; }
+    .auth-card:hover { border-color: rgba(79,70,229,0.5); box-shadow: 0 0 60px rgba(79,70,229,0.15); }
+    .form-control { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: #f8fafc; border-radius: 12px; padding: 14px 16px; }
+    .form-control:focus { background: rgba(255,255,255,0.08); border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.2); color: #f8fafc; }
+    .form-control::placeholder { color: #475569; }
+    .form-label { color: #94a3b8; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .btn-gradient { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 1rem; transition: all 0.3s; }
+    .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(79,70,229,0.4); color: white; }
+    .divider { border-color: rgba(255,255,255,0.1); }
+    .brand { font-weight: 800; font-size: 1.5rem; }
+    .error-text { color: #f87171; font-size: 0.82rem; margin-top: 4px; }
+    .input-group-text { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-right: none; color: #64748b; border-radius: 12px 0 0 12px; }
+    .input-group .form-control { border-left: none; border-radius: 0 12px 12px 0; }
+  </style>
+</head>
+<body>
+  <div class="mesh-bg"></div>
+  <div class="container d-flex justify-content-center py-5">
+    <div class="auth-card">
+      <div class="text-center mb-4">
+        <a href="{% url 'home' %}" class="text-decoration-none">
+          <span class="brand text-white">GVMC<span style="color: var(--primary)">.</span></span>
+        </a>
+        <h4 class="mt-3 fw-bold">Welcome back</h4>
+        <p class="text-muted small">Sign in to your citizen account</p>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger py-2 small rounded-3">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+            <input type="text" name="username" class="form-control" placeholder="Enter your username"
+                   value="{{ form.username.value|default:'' }}" autocomplete="username">
+          </div>
+          {% if form.username.errors %}<p class="error-text">{{ form.username.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="mb-4">
+          <label class="form-label">Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+            <input type="password" name="password" class="form-control" placeholder="Enter your password" autocomplete="current-password">
+          </div>
+          {% if form.non_field_errors %}<p class="error-text">{{ form.non_field_errors.0 }}</p>{% endif %}
+        </div>
+        <button type="submit" class="btn btn-gradient w-100">
+          <i class="fa-solid fa-right-to-bracket me-2"></i>Sign In
+        </button>
+      </form>
+
+      <hr class="divider my-4">
+      <p class="text-center text-muted mb-0 small">
+        Don't have an account?
+        <a href="{% url 'users:register' %}" class="text-primary fw-semibold text-decoration-none">Create one free</a>
+      </p>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,13 +1,11 @@
 import os
 from pathlib import Path
 
-# 1. BASE DIRECTORY & KEY SETTINGS
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=v#97-px^jwf^%ctzk8#$w_lfqdx4k*sk*!q&(q($!6siuv3ee'
 DEBUG = True
 ALLOWED_HOSTS = []
 
-# 2. APPLICATION DEFINITION
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -17,6 +15,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'complaints.apps.ComplaintsConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -34,7 +33,7 @@ ROOT_URLCONF = 'gvmc.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'], # Added templates folder support
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -49,7 +48,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'gvmc.wsgi.application'
 
-# 3. DATABASE (SQLite)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -57,7 +55,6 @@ DATABASES = {
     }
 }
 
-# 4. PASSWORDS & LOCALIZATION
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -71,21 +68,21 @@ USE_I18N = True
 USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# 5. STATIC & MEDIA FILES (Cleaned up)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# 6. EMAIL CONFIGURATION (SMTP)
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'danushkaviti@gmail.com'
-EMAIL_HOST_PASSWORD = 'sgaocskeesygnlsc' # Use your 16-character Google App Password
+EMAIL_HOST_PASSWORD = 'sgaocskeesygnlsc'
 DEFAULT_FROM_EMAIL = 'GVMC Admin <danushkaviti@gmail.com>'
 
-# 7. GOOGLE GEMINI AI KEY
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "AIzaSyAO7Mcqm_32SWDNTUlmSgf2drykeUsXbCI")
